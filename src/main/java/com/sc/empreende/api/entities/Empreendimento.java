@@ -20,7 +20,7 @@ import lombok.Setter;
 @Table(name = "tb_empreendimento")
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
-public class Empreendimentos {
+public class Empreendimento {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID id;
