@@ -64,7 +64,7 @@ A aplicação foi desenvolvida seguindo o padrão de camadas para garantir a sep
     git clone https://github.com/nicholas-sc-08/sc-empreende-api.git
     cd sc-empreende-api
     ```
-2.  Suba os containers (API + Banco de Dados) após configurar o arquivo ``docker-compose`` com suas configurações do Banco de Dados:
+2.  Suba os containers (API + Banco de Dados):
     ```bash
     docker-compose up -d --build
     ```
