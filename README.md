@@ -19,7 +19,9 @@ O projeto foi construído com foco em **alta disponibilidade, escalabilidade e m
 
 ## 🎥 Vídeo Pitch
 Assista à demonstração do sistema e explicação técnica:
-em breve
+
+[![Assista no YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.loom.com/share/8518335e8e4545909c0ed9c202c90604)
+
 
 ## 🛠️ Tecnologias Utilizadas
 A stack tecnológica foi selecionada para garantir uma solução de nível empresarial:

@@ -1,10 +1,13 @@
+version: "3.9"
+
 services:
-  db:
-    image: postgres:15
-    container_name: sc-empreende-db
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_DB: sc-empreende
+      POSTGRES_DB: empreendimentos_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -12,19 +15,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  api:
+  backend:
     build: .
-    container_name: sc-empreende-api
-    restart: on-failure
+    container_name: spring_backend
+    depends_on:
+      - postgres
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/sc-empreende
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-    depends_on:
-      - db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/empreendimentos_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
 volumes:
   postgres_data:

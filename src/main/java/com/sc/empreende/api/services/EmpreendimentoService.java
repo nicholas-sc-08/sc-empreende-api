@@ -15,7 +15,6 @@ import com.sc.empreende.api.exceptions.EmpreendimentoEmailAlreadyExists;
 import com.sc.empreende.api.exceptions.EmpreendimentoNotFoundById;
 import com.sc.empreende.api.mappers.EmpreendimentoMapper;
 import com.sc.empreende.api.repositories.EmpreendimentoRepository;
-import com.sc.empreende.api.shared.StatusEmpreendimento;
 
 import lombok.RequiredArgsConstructor;
 
