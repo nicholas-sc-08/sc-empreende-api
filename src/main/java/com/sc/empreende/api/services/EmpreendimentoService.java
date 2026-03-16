@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.sc.empreende.api.dtos.Request.EmpreendimentoCreateDTO;
 import com.sc.empreende.api.dtos.Response.EmpreendimentoResponseDTO;
 import com.sc.empreende.api.entities.Empreendimento;
+import com.sc.empreende.api.exceptions.EmpreendimentoEmailAlreadyExists;
 import com.sc.empreende.api.exceptions.EmpreendimentoNotFoundById;
 import com.sc.empreende.api.mappers.EmpreendimentoMapper;
 import com.sc.empreende.api.repositories.EmpreendimentoRepository;
@@ -27,6 +29,15 @@ public class EmpreendimentoService {
 
     public EmpreendimentoResponseDTO findByIdEmpreendimento(UUID id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id).orElseThrow(() -> new EmpreendimentoNotFoundById("Empreendimento com o id: "+id+" não existe!"));
+        return empreendimentoMapper.paraDTO(empreendimento);
+    }
+
+    public EmpreendimentoResponseDTO createEmpreendimento(EmpreendimentoCreateDTO dto) {
+        Empreendimento entidade = empreendimentoMapper.paraEntidade(dto);
+        empreendimentoRepository.findByEmail(dto.email()).ifPresent(e -> { throw new EmpreendimentoEmailAlreadyExists("Empreendimento com o email "+dto.email()+" já existe!"); });
+
+        Empreendimento empreendimento = empreendimentoRepository.save(entidade);
+        
         return empreendimentoMapper.paraDTO(empreendimento);
     }
 }
