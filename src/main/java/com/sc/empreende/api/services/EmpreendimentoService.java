@@ -5,14 +5,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sc.empreende.api.dtos.Request.EmpreendimentoCreateDTO;
+import com.sc.empreende.api.dtos.Request.EmpreendimentoUpdateDTO;
 import com.sc.empreende.api.dtos.Response.EmpreendimentoResponseDTO;
 import com.sc.empreende.api.entities.Empreendimento;
 import com.sc.empreende.api.exceptions.EmpreendimentoEmailAlreadyExists;
 import com.sc.empreende.api.exceptions.EmpreendimentoNotFoundById;
 import com.sc.empreende.api.mappers.EmpreendimentoMapper;
 import com.sc.empreende.api.repositories.EmpreendimentoRepository;
+import com.sc.empreende.api.shared.StatusEmpreendimento;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class EmpreendimentoService {
     private final EmpreendimentoRepository empreendimentoRepository;
     private final EmpreendimentoMapper empreendimentoMapper;
+    private final EmpreendimentoValidator empreendimentoValidator;
 
     public List<EmpreendimentoResponseDTO> findAllEmpreendimentos() {
         List<Empreendimento> empreendimentos = empreendimentoRepository.findAll();
@@ -32,6 +36,7 @@ public class EmpreendimentoService {
         return empreendimentoMapper.paraDTO(empreendimento);
     }
 
+    @Transactional
     public EmpreendimentoResponseDTO createEmpreendimento(EmpreendimentoCreateDTO dto) {
         Empreendimento entidade = empreendimentoMapper.paraEntidade(dto);
         empreendimentoRepository.findByEmail(dto.email()).ifPresent(e -> { throw new EmpreendimentoEmailAlreadyExists("Empreendimento com o email "+dto.email()+" já existe!"); });
@@ -39,5 +44,31 @@ public class EmpreendimentoService {
         Empreendimento empreendimento = empreendimentoRepository.save(entidade);
         
         return empreendimentoMapper.paraDTO(empreendimento);
+    }
+
+    @Transactional
+    public EmpreendimentoResponseDTO updateEmpreendimento(EmpreendimentoUpdateDTO dto, UUID id) {
+        Empreendimento entidade = empreendimentoRepository.findById(id).orElseThrow(() -> new EmpreendimentoNotFoundById("Empreendimento com o id: "+id+" não existe!"));
+        empreendimentoValidator.validarAtualizacao(entidade, dto);
+
+        Empreendimento novoEmpreendimento = empreendimentoMapper.paraEntidade(dto, id, entidade.getStatus());
+
+        Empreendimento empreendimento = empreendimentoRepository.save(novoEmpreendimento);
+        return empreendimentoMapper.paraDTO(empreendimento);
+    }
+
+    @Transactional
+    public EmpreendimentoResponseDTO updateStatusEmpreendimento(UUID id) {
+        Empreendimento entidade = empreendimentoRepository.findById(id).orElseThrow(() -> new EmpreendimentoNotFoundById("Empreendimento com o id: "+id+" não existe!"));
+        empreendimentoValidator.validarStatusEmpreendimento(entidade);
+        
+        Empreendimento empreendimento = empreendimentoRepository.save(entidade);
+        return empreendimentoMapper.paraDTO(empreendimento);
+    }
+
+    @Transactional
+    public void deleteByIdEmpreendimento(UUID id) {
+        empreendimentoRepository.findById(id).orElseThrow(() -> new EmpreendimentoNotFoundById("Empreendimento com o id "+id+" não existe!"));
+        empreendimentoRepository.deleteById(id);
     }
 }
